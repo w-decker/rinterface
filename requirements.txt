@@ -1,0 +1,4 @@
+ipython==8.12.3
+ipython==8.30.0
+rpy2==3.5.17
+setuptools==75.1.0
