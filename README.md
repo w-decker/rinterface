@@ -3,6 +3,12 @@ _Quickly interface with R in Python._
 
 Have you ever needed to run some R code in-between some Python code? Do you want to avoid figuring out [`rpy2`](https://rpy2.github.io/)? Then check out `RInterface`!
 
+## Installation 
+
+```bash
+pip install git+https://github.com/w-decker/rinterface.git
+```
+
 ## `rinterface()`
 A single, all-purpose function for quickly interfacing with R in Python.
 ### Basic
@@ -62,6 +68,7 @@ data(iris)
 model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data=iris)
 summary(model)
 """
+# execute your R script
 output = R(code, capture=True)
 print(output.stdout)
 ```
@@ -106,6 +113,7 @@ aic <- AIC(model)
 # @grab{float}
 bic <- BIC(model)
 """
+# execute your R script
 aic, bic = R(code, grab=True)
 aic, bic
 ```
@@ -115,7 +123,7 @@ aic, bic
 
 ### More on grabbing
 
-Thus far, the grabbing procedure can access arrays, matrices, integers, floats and strings in R and can load them back into Python as `int, float, str, list[int], list[float], list[str]` or `np.ndarray`. 
+Thus far, the grabbing procedure can access arrays, matrices, integers, floats and strings in R and can load them back into Python as `int, float, str, list[int], list[float], list[str], pandas.DataFrame` or `np.ndarray`. 
 
 ```python
 import rinterface.rinterface as R
@@ -129,16 +137,33 @@ y <- c(43.55, 3.0342, 3.23432)
 
 # @grab{list[int]}
 v <- c(10, 20, 30)
-"""
 
+df <- data.frame(
+  colA = c(1.5, 2.5, 3.5),
+  colB = c(10, 20, 30),
+  colC = c(100, 200, 300)
+)
+
+# @grab{pd.DataFrame}
+df
+"""
+# execute your R script
 results = R(code, grab=True)
 print(results[0], type(results[0]))  
 print(results[1], type(results[1]))  
 print(results[2], type(results[2])) 
+print(results[3], type(results[3]))
 ```
 ```plain
 [[1. 2. 3.]
  [4. 5. 6.]] <class 'numpy.ndarray'>
 [43.55, 3.0342, 3.23432] <class 'list'>
 [10, 20, 30] <class 'list'>
+   colA  colB   colC
+0   1.5  10.0  100.0
+1   2.5  20.0  200.0
+2   3.5  30.0  300.0 <class 'pandas.core.frame.DataFrame'>
 ```
+
+>[!WARNING]
+>Grabbing is great, but it has _not_ been thoroughly tested. Edge cases are bound to arise. Scalar values, strings and R `data.frame` are the safest options. 
