@@ -99,6 +99,9 @@ F-statistic: 295.5 on 3 and 146 DF,  p-value: < 2.2e-16
 
 Although seeing the output of your R script in your IPython environment is convienent, it is limiting. Sometimes you might need to access the values generated in your R script. You can access these values using a simple heuristic: `# @grab{type}`. Here's how to do it: 1) assign the value you want to a variable. 2) On the line above this variable, write the "tag": `# @grab{type}` and input the type (e.g., `str`, `int`, `float`, etc.) that you wish to load in the variable as. 
 
+>[!IMPORTANT]
+>The tag must be on the immediate line before the variable you wish to grab, and there must be an empty line below that variable before any new code can written.
+
 ```python
 import rinterface.rinterface as R
 
@@ -166,4 +169,7 @@ print(results[3], type(results[3]))
 ```
 
 >[!WARNING]
->Grabbing is great, but it has _not_ been thoroughly tested. Edge cases are bound to arise. Scalar values, strings and R `data.frame` are the safest options. 
+>Grabbing is great, but it has _not_ been thoroughly tested. Edge cases are bound to arise. Scalar values, strings and R's `data.frame` are the safest types in R to convert to equivalent types in Python.
+
+>[!TIP]
+>If you're having trouble grabbing certain variables, here are a few suggestions: 1) write a print statement and capture the output (`R(code, capture=True)`). 2) Just grab the variable as a string and manipulate it yourself.
