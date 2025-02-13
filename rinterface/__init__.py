@@ -1,4 +1,5 @@
 from .rinterface import rinterface
+from .utils import to_r
 import subprocess
 
 def is_r_installed():
@@ -11,4 +12,4 @@ def is_r_installed():
 if not is_r_installed():
     raise RuntimeError("Rscript is not installed on your system. Please install R to use this package.")
 
-__all__ = ["rinterface"]
+__all__ = ["rinterface", "to_r"]
