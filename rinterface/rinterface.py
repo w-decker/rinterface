@@ -1,3 +1,14 @@
+"""
+Single, all purpose function for interfacing with R with Python.
+
+At its most basic implementation `rinterface()` takes in a "script" of R-valid code, generates a temporary file (`"temp.R"`), evaluates the script using the `Rscript` command-line tool and then deletes the temporary file. 
+
+You can also "capture" the output from your R script. This returns the output as a formatted string.
+
+Although seeing the output of your R script in your IPython environment is convienent, it is limiting. Sometimes you might need to access the values generated in your R script. You can access these values using a simple heuristic: `# @grab{type}`. Here's how to do it: 1) assign the value you want to a variable. 2) On the line above this variable, write the "tag": `# @grab{type}` and input the type (e.g., `str`, `int`, `float`, etc.) that you wish to load in the variable as. 
+
+"""
+
 import subprocess
 import re
 import os
@@ -5,7 +16,6 @@ import numpy as np
 import pandas as pd
 from typing import Any
 import uuid
-
 
 def rinterface(
                 code: str,
@@ -46,31 +56,31 @@ def rinterface(
     for var_type, var_def in annotated_lines:
         # this is how variables are extracted
         snippet = f"""
-                # For variable: {var_def}, type={var_type}
-                if (is.data.frame({var_def})) {{
-                # Make a unique filename for this data frame
-                df_filename <- paste0(".grab_df_", make.names("{var_def}"), "_", "{uuid.uuid4().hex}", ".csv")
-                # Write a line "varName=DATAFRAME:.grab_df_xyz.csv"
-                cat("{var_def}=DATAFRAME:", df_filename, "\\n", file="{temp_output}", append=TRUE)
-                # Write the data frame to that CSV
-                write.csv({var_def}, file=df_filename, row.names=FALSE)
-                }} else if (is.matrix({var_def})) {{
-                dims <- dim({var_def})
-                cat("{var_def}=", file="{temp_output}", append=TRUE)
-                cat(paste0(dims[1], "x", dims[2], ":"), file="{temp_output}", append=TRUE)
-                cat(paste({var_def}, collapse=","), file="{temp_output}", append=TRUE)
-                cat("\\n", file="{temp_output}", append=TRUE)
-                }} else if (is.vector({var_def})) {{
-                cat("{var_def}=", file="{temp_output}", append=TRUE)
-                cat(paste({var_def}, collapse=","), file="{temp_output}", append=TRUE)
-                cat("\\n", file="{temp_output}", append=TRUE)
-                }} else {{
-                # fallback for scalar/string/factor
-                cat("{var_def}=", file="{temp_output}", append=TRUE)
-                cat(as.character({var_def}), file="{temp_output}", append=TRUE)
-                cat("\\n", file="{temp_output}", append=TRUE)
-                }}
-                 """
+        # For variable: {var_def}, type={var_type}
+        if (is.data.frame({var_def})) {{
+        # Make a unique filename for this data frame
+        df_filename <- paste0(".grab_df_", make.names("{var_def}"), "_", "{uuid.uuid4().hex}", ".csv")
+        # Write a line "varName=DATAFRAME:.grab_df_xyz.csv"
+        cat("{var_def}=DATAFRAME:", df_filename, "\\n", file="{temp_output}", append=TRUE)
+        # Write the data frame to that CSV
+        write.csv({var_def}, file=df_filename, row.names=FALSE)
+        }} else if (is.matrix({var_def})) {{
+        dims <- dim({var_def})
+        cat("{var_def}=", file="{temp_output}", append=TRUE)
+        cat(paste0(dims[1], "x", dims[2], ":"), file="{temp_output}", append=TRUE)
+        cat(paste({var_def}, collapse=","), file="{temp_output}", append=TRUE)
+        cat("\\n", file="{temp_output}", append=TRUE)
+        }} else if (is.vector({var_def})) {{
+        cat("{var_def}=", file="{temp_output}", append=TRUE)
+        cat(paste({var_def}, collapse=","), file="{temp_output}", append=TRUE)
+        cat("\\n", file="{temp_output}", append=TRUE)
+        }} else {{
+        # fallback for scalar/string/factor
+        cat("{var_def}=", file="{temp_output}", append=TRUE)
+        cat(as.character({var_def}), file="{temp_output}", append=TRUE)
+        cat("\\n", file="{temp_output}", append=TRUE)
+        }}
+        """
         grab_snippet += snippet
     if grab_snippet:
         code += "\n\n# Appended grab-snippet\n" + grab_snippet
