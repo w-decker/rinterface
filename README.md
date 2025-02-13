@@ -173,3 +173,55 @@ print(results[3], type(results[3]))
 
 >[!TIP]
 >If you're having trouble grabbing certain variables, here are a few suggestions: 1) write a print statement and capture the output (`R(code, capture=True)`). 2) Just grab the variable as a string and manipulate it yourself.
+
+## Some interface helpers
+Strings, floats, and integers are easy to integrate from your Python environment into your `rinterface.rinterface` script:
+
+```python 
+import rinterface.rinterface as R
+
+x = 10
+hello = "'hello'" # note the double quotes "' '"
+
+code = f"""
+print({x})
+print({hello})
+"""
+
+# execute your R script
+R(code)
+```
+```plain
+[1] 10
+[1] "hello"
+```
+
+However, things like numpy arrays and pandas dataframes are more difficult. Enter `rinterface.utils`. With one simple function (`to_r()`), you can integrate your numpy arrays and pandas dataframes right into your R code at runtime. 
+
+```python
+import rinterface.rinterface as R
+from rinterface.utils import to_r
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+iris = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+code = f"""
+df <- {to_r(iris)}
+head(df)
+"""
+
+# execute your R script
+R(code)
+```
+```plain
+  sepal.length..cm. sepal.width..cm. petal.length..cm. petal.width..cm.
+1               5.1              3.5               1.4              0.2
+2               4.9              3.0               1.4              0.2
+3               4.7              3.2               1.3              0.2
+4               4.6              3.1               1.5              0.2
+5               5.0              3.6               1.4              0.2
+6               5.4              3.9               1.7              0.4
+```
+>[!WARNING]
+>`rinterface.utils` has _not_ been thoroughly tested. Edge cases and errors are bound to arise.
