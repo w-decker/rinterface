@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="rinterface",
-    version="0.0.2",
+    version="0.0.3",
     author="Will Decker",
     author_email="will.decker@gatech.edu",
     description="Quickly interface with R in Python",
