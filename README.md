@@ -175,17 +175,15 @@ print(results[3], type(results[3]))
 >If you're having trouble grabbing certain variables, here are a few suggestions: 1) write a print statement and capture the output (`R(code, capture=True)`). 2) Just grab the variable as a string and manipulate it yourself.
 
 ## Some interface helpers
-Strings, floats, and integers are easy to integrate from your Python environment into your `rinterface.rinterface` script:
+Floats, and integers are easy to integrate from your Python environment into your `rinterface.rinterface` script:
 
 ```python 
 import rinterface.rinterface as R
 
 x = 10
-hello = "'hello'" # note the double quotes "' '"
 
 code = f"""
 print({x})
-print({hello})
 """
 
 # execute your R script
@@ -193,7 +191,6 @@ R(code)
 ```
 ```plain
 [1] 10
-[1] "hello"
 ```
 
 However, things like numpy arrays and pandas dataframes are more difficult. Enter `rinterface.utils`. With one simple function (`to_r()`), you can integrate your numpy arrays and pandas dataframes right into your R code at runtime. 
@@ -223,5 +220,7 @@ R(code)
 5               5.0              3.6               1.4              0.2
 6               5.4              3.9               1.7              0.4
 ```
+`rinterface.utils.to_r()` supports Python types `str`, `bool`, `np.ndarray` and `pd.DataFrame`
+
 >[!WARNING]
 >`rinterface.utils` has _not_ been thoroughly tested. Edge cases and errors are bound to arise.
