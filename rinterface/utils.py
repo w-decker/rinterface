@@ -7,6 +7,10 @@ def to_r(value):
         return _from_numpy(value)
     elif type(value) == pd.DataFrame:
         return _from_pandas(value)
+    elif type(value) == str:
+        return _from_str(value)
+    elif type(value) == bool:
+        return _from_bool(value)
     else:
         raise ValueError(f"Unsupported type: {type(value)}")
 
@@ -38,4 +42,10 @@ def _from_pandas(value:pd.DataFrame):
         r_columns.append(r_col)
     return f"data.frame({', '.join(r_columns)})"
 
-    
+def _from_str(value:str):
+    """Convert string to R"""
+    return f'"{value}"'
+
+def _from_bool(value:bool):
+    """Convert bool to R"""
+    return "TRUE" if value else "FALSE"
