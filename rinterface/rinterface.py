@@ -54,8 +54,9 @@ def rinterface(
         annotated_lines = re.findall(r"#\s*@grab\{([^}]+)\}\n(.+)", code)
     grab_snippet = ""
     for var_type, var_def in annotated_lines:
-        # this is how variables are extracted
         snippet = f"""
+        #######################################################
+        ############ DO NOT MODIFY BELOW THIS LINE ############
         # For variable: {var_def}, type={var_type}
         if (is.data.frame({var_def})) {{
         # Make a unique filename for this data frame
@@ -80,6 +81,8 @@ def rinterface(
         cat(as.character({var_def}), file="{temp_output}", append=TRUE)
         cat("\\n", file="{temp_output}", append=TRUE)
         }}
+        ############ DO NOT MODIFY ABOVE THIS LINE ############
+        #######################################################
         """
         grab_snippet += snippet
     if grab_snippet:
