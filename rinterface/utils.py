@@ -3,13 +3,13 @@ import pandas as pd
 
 def to_r(value):
     """Convert Python value to R"""
-    if type(value) == np.ndarray:
+    if isinstance(value, np.ndarray):
         return _from_numpy(value)
-    elif type(value) == pd.DataFrame:
+    elif isinstance(value, pd.DataFrame):
         return _from_pandas(value)
-    elif type(value) == str:
+    elif isinstance(value, str):
         return _from_str(value)
-    elif type(value) == bool:
+    elif isinstance(value, bool): 
         return _from_bool(value)
     else:
         raise ValueError(f"Unsupported type: {type(value)}")
