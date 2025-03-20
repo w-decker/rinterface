@@ -17,6 +17,8 @@ import pandas as pd
 from typing import Any
 import uuid
 
+from . import backend as bk
+
 def rinterface(
                 code: str,
                 save: bool = False, 
@@ -47,8 +49,8 @@ def rinterface(
         - If `capture=True` (and not grabbing variables), returns `CompletedProcess`.
         - Otherwise, returns None.
     """
-    temp_file = ".temp.R"
-    temp_output = ".grab_output.txt"
+    temp_file = os.path.join(bk.scratch, f"temp_{uuid.uuid4().hex}.R")
+    temp_output = os.path.join(bk.scratch, f"temp_output_{uuid.uuid4().hex}.txt")
     annotated_lines = []
     if grab:
         annotated_lines = re.findall(r"#\s*@grab\{([^}]+)\}\n(.+)", code)
@@ -98,25 +100,38 @@ def rinterface(
         if save:
             if not fname:
                 raise ValueError("If 'save' is True, 'fname' cannot be None.")
-            with open(fname, "w") as f_out:
+            with open(os.path.join(bk.scratch, fname), "w") as f_out:
                 f_out.write(code)
 
         # Run R script
         if capture:
             # Capture all output in a CompletedProcess
-            results = subprocess.run(
-                ["Rscript", temp_file],
-                text=True,
-                capture_output=True,
-                check=True
-            )
+            if bk.command == "Rscript":
+                results = subprocess.run(
+                    ["Rscript", temp_file],
+                    text=True,
+                    capture_output=True,
+                    check=True
+                )
+            elif bk.command.lower() == "apptainer":
+                 results = subprocess.run(
+                    ["apptainer", "exec", bk.apptainer_path, "Rscript", temp_file],
+                    check=True
+                ) 
         else:
-            subprocess.run(
-                ["Rscript", temp_file],
-                text=True,
-                capture_output=False,
-                check=True
-            )
+            if bk.command == "Rscript":
+                subprocess.run(
+                    ["Rscript", temp_file],
+                    text=True,
+                    capture_output=False,
+                    check=True
+                )
+
+            elif bk.command.lower() == "apptainer":
+                subprocess.run(
+                    ["apptainer", "exec", bk.apptainer_path, "Rscript", temp_file],
+                    check=True
+                )
 
         # If user wants raw captured output (and isn't grabbing variables)
         if grab is False and capture is True:
