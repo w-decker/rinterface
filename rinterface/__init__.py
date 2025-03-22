@@ -10,8 +10,9 @@ def is_r_installed():
     except FileNotFoundError:
         return False
     
-if not is_r_installed():
-    raise RuntimeError("Rscript is not installed on your system. Please install R to use this package.")
+if bk.command == "Rscript":    
+    if not is_r_installed():
+        raise RuntimeError("Rscript is not installed on your system. Please install R to use this package.")
 
 if bk.command == "apptainer" and bk.apptainer_path is None:
     raise ValueError("If using Apptainer, please set the path to the Apptainer executable in rinterface.backend.apptainer_path")
