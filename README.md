@@ -19,7 +19,7 @@ import rinterface.rinterface as R
 
 code = """
 data(iris)
-model <- model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data=iris)
+model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data=iris)
 summary(model)
 """
 
