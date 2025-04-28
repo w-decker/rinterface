@@ -265,3 +265,7 @@ R(code)
 ```
 
 This will modify the actual command executed by `rinterface`. 
+
+
+# Contributing
+Please submit [issues](https://github.com/w-decker/rinterface/issues/new) or create a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests). You can also [email me](mailto:will.decker@gatech.edu?subject=[rinterface]). 
