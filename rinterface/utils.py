@@ -38,7 +38,8 @@ def _from_pandas(value:pd.DataFrame):
         if pd.api.types.is_numeric_dtype(value[col]):
             r_col = f"{col_name} = c({', '.join(map(str, values))})"
         else:
-            r_col = f"{col_name} = c({', '.join(f'\"{str(v)}\"' for v in values)})"
+            value_str = ', '.join(f'"{str(v)}"' for v in values)
+            r_col = f"{col_name} = c({value_str})"
         r_columns.append(r_col)
     return f"data.frame({', '.join(r_columns)})"
 
